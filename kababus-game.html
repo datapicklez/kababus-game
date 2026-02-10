@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>הקבבוס - חידות היגיון</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Decorative elements */
+    .decor-1, .decor-2 {
+      position: fixed;
+      pointer-events: none;
+      opacity: 0.15;
+    }
+    .decor-1 {
+      top: 10%;
+      right: 5%;
+      font-size: 4rem;
+      transform: rotate(15deg);
+    }
+    .decor-2 {
+      bottom: 15%;
+      left: 8%;
+      font-size: 3rem;
+      transform: rotate(-10deg);
+    }
+
+    .container {
+      max-width: 480px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      font-size: 3rem;
+      margin-bottom: 8px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+    h1 {
+      font-size: 2.2rem;
+      color: white;
+      font-weight: 800;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      margin-bottom: 4px;
+    }
+    .tagline {
+      color: rgba(255,255,255,0.85);
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Cards */
+    .card {
+      background: rgba(255,255,255,0.95);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+
+    /* Screen management */
+    .screen {
+      display: none;
+    }
+    .screen.active {
+      display: block;
+    }
+
+    /* Form elements */
+    .section-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .section-icon {
+      font-size: 2rem;
+    }
+    .section-title {
+      margin-top: 10px;
+      color: #667eea;
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 20px;
+      font-size: 1.1rem;
+      border: 3px solid #e5e7eb;
+      border-radius: 16px;
+      background: #f9fafb;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      border-color: #667eea;
+    }
+    input[type="text"]::placeholder {
+      color: #9ca3af;
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    /* Difficulty selector */
+    .difficulty-group {
+      margin-bottom: 28px;
+    }
+    .difficulty-options {
+      display: flex;
+      gap: 10px;
+    }
+    .diff-btn {
+      flex: 1;
+      padding: 14px 10px;
+      border: 3px solid #e5e7eb;
+      border-radius: 16px;
+      background: #f9fafb;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .diff-btn:hover {
+      border-color: #c4b5fd;
+    }
+    .diff-btn.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+    }
+    .diff-icon {
+      font-size: 1.5rem;
+    }
+    .diff-label {
+      font-weight: 700;
+      margin-top: 6px;
+      color: #1f2937;
+    }
+    .diff-desc {
+      font-size: 0.75rem;
+      color: #6b7280;
+      margin-top: 2px;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      width: 100%;
+      padding: 18px;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: white;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      transition: transform 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-secondary {
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #667eea;
+      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+      border: 2px solid #667eea;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-secondary:hover {
+      background: rgba(102,126,234,0.15);
+    }
+    .btn-secondary:disabled {
+      color: #ccc;
+      border-color: #ddd;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #9ca3af;
+      background: transparent;
+      border: 2px dashed #d1d5db;
+      border-radius: 14px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .btn-ghost:hover {
+      color: #6b7280;
+      border-color: #9ca3af;
+    }
+
+    .btn-text {
+      padding: 14px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #6b7280;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* Tip box */
+    .tip-box {
+      margin-top: 24px;
+      padding: 16px;
+      background: linear-gradient(135deg, #fdf4ff, #fae8ff);
+      border-radius: 14px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #86198f;
+    }
+
+    /* Error box */
+    .error-box {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: #dc2626;
+      padding: 14px;
+      border-radius: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-weight: 500;
+      display: none;
+    }
+    .error-box.show {
+      display: block;
+    }
+
+    /* Loading */
+    .loading-content {
+      text-align: center;
+      padding: 60px 32px;
+    }
+    .spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid #e5e7eb;
+      border-top-color: #667eea;
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .loading-text {
+      font-size: 1.2rem;
+      color: #667eea;
+      font-weight: 600;
+    }
+
+    /* Puzzle screen */
+    .puzzle-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .badge {
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+    .badge-topic {
+      background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
+      color: #5b21b6;
+    }
+    .badge-easy {
+      background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+      color: #065f46;
+    }
+    .badge-medium {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      color: #92400e;
+    }
+    .badge-hard {
+      background: linear-gradient(135deg, #fecaca, #fca5a5);
+      color: #991b1b;
+    }
+
+    .clue-box {
+      background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(240,147,251,0.15));
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 24px;
+      text-align: center;
+      border: 2px solid rgba(102,126,234,0.2);
+    }
+    .clue-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+    .clue-text {
+      font-size: 1.5rem;
+      font-weight: 600;
+      line-height: 1.7;
+      color: #1f2937;
+    }
+
+    .answer-input {
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      padding: 18px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .action-buttons .btn-primary {
+      flex: 2;
+      padding: 16px;
+    }
+    .action-buttons .btn-secondary {
+      flex: 1;
+    }
+
+    /* Hints */
+    .hints-container {
+      margin-bottom: 20px;
+    }
+    .hint-item {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 2px solid #f59e0b;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 10px;
+    }
+    .hint-label {
+      font-weight: 600;
+      color: #92400e;
+    }
+    .hint-text {
+      color: #78350f;
+    }
+
+    /* Feedback */
+    .feedback {
+      background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      color: #dc2626;
+      padding: 14px;
+      border-radius: 14px;
+      text-align: center;
+      margin-bottom: 20px;
+      font-weight: 500;
+      display: none;
+    }
+    .feedback.show {
+      display: block;
+      animation: shake 0.5s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Revealed answer */
+    .revealed-box {
+      background: linear-gradient(135deg, #fef2f2, #fce7f3);
+      border: 2px solid #f472b6;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+      display: none;
+    }
+    .revealed-box.show {
+      display: block;
+    }
+    .revealed-label {
+      font-size: 0.9rem;
+      color: #be185d;
+      margin-bottom: 8px;
+    }
+    .revealed-answer {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #9d174d;
+    }
+    .revealed-explanation {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .nav-buttons button {
+      flex: 1;
+    }
+
+    /* Success screen */
+    .success-content {
+      text-align: center;
+      animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes pop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .success-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    }
+
+    .success-title {
+      color: #10b981;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .success-message {
+      color: #1f2937;
+      margin-bottom: 24px;
+      font-size: 1.1rem;
+    }
+
+    .success-answer-box {
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 28px;
+      border: 2px solid #a7f3d0;
+    }
+    .success-answer-label {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .success-answer-text {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #10b981;
+    }
+    .success-explanation {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #a7f3d0;
+      line-height: 1.6;
+    }
+
+    .success-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      margin-top: 28px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="decor-1">🧩</div>
+  <div class="decor-2">✨</div>
+
+  <div class="container">
+    <header>
+      <div class="logo">🧩</div>
+      <h1>הקבבוס</h1>
+      <p class="tagline">חידות היגיון לאנשים חכמים (כמוך!)</p>
+    </header>
+
+    <!-- Setup Screen -->
+    <div id="setup-screen" class="screen active">
+      <div class="card">
+        <div class="section-header">
+          <span class="section-icon">🎯</span>
+          <h2 class="section-title">אז על מה נחשוב היום?</h2>
+        </div>
+
+        <div class="input-group">
+          <label for="topic-input">נושא לחידה:</label>
+          <input type="text" id="topic-input" placeholder="למשל: חיות, סרטים, אוכל, היסטוריה...">
+        </div>
+
+        <div class="difficulty-group">
+          <label>רמת קושי:</label>
+          <div class="difficulty-options">
+            <button class="diff-btn" data-level="easy">
+              <div class="diff-icon">🧁</div>
+              <div class="diff-label">קל</div>
+              <div class="diff-desc">חימום קל</div>
+            </button>
+            <button class="diff-btn active" data-level="medium">
+              <div class="diff-icon">🎯</div>
+              <div class="diff-label">בינוני</div>
+              <div class="diff-desc">בול בפוני</div>
+            </button>
+            <button class="diff-btn" data-level="hard">
+              <div class="diff-icon">🧠</div>
+              <div class="diff-label">קשה</div>
+              <div class="diff-desc">למתקדמים בלבד</div>
+            </button>
+          </div>
+        </div>
+
+        <div id="error-box" class="error-box"></div>
+
+        <button id="generate-btn" class="btn-primary">יאללה, תפתיעו אותי! 🚀</button>
+
+        <div class="tip-box">
+          💡 <strong>טיפ:</strong> נסו נושאים כמו: חיות, פירות, מזג אוויר, גוף האדם, בית...
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen">
+      <div class="card">
+        <div class="loading-content">
+          <div class="spinner"></div>
+          <p class="loading-text">מבשלים חידה טעימה... 🍳</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Puzzle Screen -->
+    <div id="puzzle-screen" class="screen">
+      <div class="card">
+        <div class="puzzle-header">
+          <span id="puzzle-topic" class="badge badge-topic"></span>
+          <span id="puzzle-difficulty" class="badge"></span>
+        </div>
+
+        <div class="clue-box">
+          <div class="clue-label">🧩 החידה:</div>
+          <p id="clue-text" class="clue-text"></p>
+        </div>
+
+        <div id="answer-section">
+          <div class="input-group">
+            <input type="text" id="answer-input" class="answer-input" placeholder="מה התשובה? 🤔">
+          </div>
+
+          <div class="action-buttons">
+            <button id="check-btn" class="btn-primary">בדיקה! ✓</button>
+            <button id="hint-btn" class="btn-secondary">רמז 💡</button>
+          </div>
+        </div>
+
+        <div id="hints-container" class="hints-container"></div>
+
+        <div id="feedback" class="feedback"></div>
+
+        <div id="revealed-box" class="revealed-box">
+          <div class="revealed-label">התשובה הייתה:</div>
+          <div id="revealed-answer" class="revealed-answer"></div>
+          <div id="revealed-explanation" class="revealed-explanation"></div>
+        </div>
+
+        <button id="reveal-btn" class="btn-ghost">🙈 נכנעתי, תראו לי את התשובה</button>
+
+        <div class="nav-buttons">
+          <button id="new-puzzle-btn" class="btn-secondary">חידה חדשה 🔄</button>
+          <button id="new-topic-btn" class="btn-text">← נושא אחר</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="success-screen" class="screen">
+      <div class="card">
+        <div class="success-content">
+          <div class="success-icon">🎉</div>
+          <h2 class="success-title">יששששש!</h2>
+          <p id="success-message" class="success-message"></p>
+
+          <div class="success-answer-box">
+            <div class="success-answer-label">התשובה:</div>
+            <div id="success-answer" class="success-answer-text"></div>
+            <div id="success-explanation" class="success-explanation"></div>
+          </div>
+
+          <div class="success-buttons">
+            <button id="another-btn" class="btn-primary">עוד אחת! 🔥</button>
+            <button id="change-topic-btn" class="btn-secondary">נושא אחר 🎯</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>נוצר באהבה 💜</footer>
+  </div>
+
+  <script>
+    // ========== CONFIGURATION ==========
+   
+    const API_URL = 'https://kababus-api.yaeltaller71.workers.dev';
+
+    // ========== STATE ==========
+    let currentTopic = '';
+    let currentDifficulty = 'medium';
+    let currentPuzzle = null;
+    let hints = [];
+    let hintIndex = 0;
+    let revealed = false;
+
+    // ========== ELEMENTS ==========
+    const screens = {
+      setup: document.getElementById('setup-screen'),
+      loading: document.getElementById('loading-screen'),
+      puzzle: document.getElementById('puzzle-screen'),
+      success: document.getElementById('success-screen')
+    };
+
+    const elements = {
+      topicInput: document.getElementById('topic-input'),
+      generateBtn: document.getElementById('generate-btn'),
+      errorBox: document.getElementById('error-box'),
+      puzzleTopic: document.getElementById('puzzle-topic'),
+      puzzleDifficulty: document.getElementById('puzzle-difficulty'),
+      clueText: document.getElementById('clue-text'),
+      answerSection: document.getElementById('answer-section'),
+      answerInput: document.getElementById('answer-input'),
+      checkBtn: document.getElementById('check-btn'),
+      hintBtn: document.getElementById('hint-btn'),
+      hintsContainer: document.getElementById('hints-container'),
+      feedback: document.getElementById('feedback'),
+      revealedBox: document.getElementById('revealed-box'),
+      revealedAnswer: document.getElementById('revealed-answer'),
+      revealedExplanation: document.getElementById('revealed-explanation'),
+      revealBtn: document.getElementById('reveal-btn'),
+      newPuzzleBtn: document.getElementById('new-puzzle-btn'),
+      newTopicBtn: document.getElementById('new-topic-btn'),
+      successMessage: document.getElementById('success-message'),
+      successAnswer: document.getElementById('success-answer'),
+      successExplanation: document.getElementById('success-explanation'),
+      anotherBtn: document.getElementById('another-btn'),
+      changeTopicBtn: document.getElementById('change-topic-btn')
+    };
+
+    // ========== MESSAGES ==========
+    const wrongMessages = [
+      'אופס! לא בדיוק... אבל יש לך סטייל 😎',
+      'ממממ לא, אבל אהבתי את הביטחון! 💅',
+      'קרוב! (או שלא, מי יודע) 🤷',
+      'נחמד, אבל התשובה חושבת אחרת 🙃',
+      'לא נכון, אבל תודה על ההשתתפות! 🎪',
+      'התשובה הזו יצאה לקפה, נסי אחרת ☕',
+      'כמעט! (ספוילר: לא כמעט) 🎭'
+    ];
+
+    const successMessages = [
+      'בוווום! 💥 את פשוט גאונה!',
+      'יאללה, מי פה חכמולוגית?! 🎓',
+      'נפלאאא! איינשטיין היה מתבייש 🧪',
+      'קלאס! ראש של פיל, לב של אריה! 🦁',
+      'וואלה כיף! הראש שלך שווה זהב 👑',
+      'מדהימה! פיצחת את זה כמו אגוז 🥜',
+      'בראבו! אפילו הגוגל מקנא 🔥',
+      'את פשוט אלופה! 🏆'
+    ];
+
+    // ========== FUNCTIONS ==========
+    function showScreen(name) {
+      Object.values(screens).forEach(s => s.classList.remove('active'));
+      screens[name].classList.add('active');
+    }
+
+    function showError(message) {
+      elements.errorBox.textContent = message;
+      elements.errorBox.classList.add('show');
+    }
+
+    function hideError() {
+      elements.errorBox.classList.remove('show');
+    }
+
+    function resetPuzzleState() {
+      hints = [];
+      hintIndex = 0;
+      revealed = false;
+      elements.hintsContainer.innerHTML = '';
+      elements.feedback.classList.remove('show');
+      elements.revealedBox.classList.remove('show');
+      elements.answerSection.style.display = 'block';
+      elements.revealBtn.style.display = 'block';
+      elements.answerInput.value = '';
+    }
+
+    async function generatePuzzle() {
+      const topic = elements.topicInput.value.trim();
+      if (!topic) {
+        showError('בלי נושא אין חידה! 🤷');
+        return;
+      }
+
+      hideError();
+      currentTopic = topic;
+      showScreen('loading');
+      resetPuzzleState();
+
+      try {
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ topic: currentTopic, difficulty: currentDifficulty })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        currentPuzzle = data;
+        displayPuzzle();
+        showScreen('puzzle');
+
+      } catch (error) {
+        console.error('Error:', error);
+        showError('משהו השתבש... נסי שוב? 🙈');
+        showScreen('setup');
+      }
+    }
+
+    function displayPuzzle() {
+      elements.puzzleTopic.textContent = currentTopic;
+      
+      const diffLabels = { easy: '🧁 קל', medium: '🎯 בינוני', hard: '🧠 קשה' };
+      elements.puzzleDifficulty.textContent = diffLabels[currentDifficulty];
+      elements.puzzleDifficulty.className = 'badge badge-' + currentDifficulty;
+      
+      elements.clueText.textContent = currentPuzzle.clue;
+      elements.answerInput.focus();
+    }
+
+    function checkAnswer() {
+      const userAnswer = elements.answerInput.value.trim();
+      if (!userAnswer) return;
+
+      const normalize = str => str.replace(/\s+/g, ' ').replace(/[\u0591-\u05C7]/g, '').replace(/['"]/g, '');
+      
+      if (normalize(userAnswer) === normalize(currentPuzzle.answer)) {
+        showSuccess();
+      } else {
+        elements.feedback.textContent = wrongMessages[Math.floor(Math.random() * wrongMessages.length)];
+        elements.feedback.classList.add('show');
+        setTimeout(() => elements.feedback.classList.remove('show'), 3000);
+      }
+    }
+
+    function showHint() {
+      if (currentPuzzle.hints && hintIndex < currentPuzzle.hints.length) {
+        const hint = currentPuzzle.hints[hintIndex];
+        const hintEl = document.createElement('div');
+        hintEl.className = 'hint-item';
+        hintEl.innerHTML = `<span class="hint-label">רמז ${hintIndex + 1}: </span><span class="hint-text">${hint}</span>`;
+        elements.hintsContainer.appendChild(hintEl);
+        hintIndex++;
+
+        if (hintIndex >= currentPuzzle.hints.length) {
+          elements.hintBtn.disabled = true;
+        }
+      }
+    }
+
+    function revealAnswer() {
+      revealed = true;
+      elements.answerSection.style.display = 'none';
+      elements.revealBtn.style.display = 'none';
+      elements.revealedAnswer.textContent = currentPuzzle.answer;
+      elements.revealedExplanation.textContent = currentPuzzle.explanation || '';
+      elements.revealedBox.classList.add('show');
+    }
+
+    function showSuccess() {
+      elements.successMessage.textContent = successMessages[Math.floor(Math.random() * successMessages.length)];
+      elements.successAnswer.textContent = currentPuzzle.answer;
+      elements.successExplanation.textContent = currentPuzzle.explanation || '';
+      showScreen('success');
+    }
+
+    function goToSetup(clearTopic = false) {
+      if (clearTopic) {
+        elements.topicInput.value = '';
+      }
+      resetPuzzleState();
+      showScreen('setup');
+    }
+
+    // ========== EVENT LISTENERS ==========
+    
+    // Difficulty buttons
+    document.querySelectorAll('.diff-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentDifficulty = btn.dataset.level;
+      });
+    });
+
+    // Generate puzzle
+    elements.generateBtn.addEventListener('click', generatePuzzle);
+    elements.topicInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') generatePuzzle();
+    });
+
+    // Check answer
+    elements.checkBtn.addEventListener('click', checkAnswer);
+    elements.answerInput.addEventListener('keypress', e => {
+      if (e.key === 'Enter') checkAnswer();
+    });
+
+    // Hints and reveal
+    elements.hintBtn.addEventListener('click', showHint);
+    elements.revealBtn.addEventListener('click', revealAnswer);
+
+    // Navigation
+    elements.newPuzzleBtn.addEventListener('click', generatePuzzle);
+    elements.newTopicBtn.addEventListener('click', () => goToSetup(true));
+    elements.anotherBtn.addEventListener('click', generatePuzzle);
+    elements.changeTopicBtn.addEventListener('click', () => goToSetup(true));
+  </script>
+</body>
+</html>
